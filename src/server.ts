@@ -20,6 +20,7 @@ const corsOption = {
 const app = express();
 app.use(cors(corsOption));
 app.use(express.json());
+//app.use(express.urlencoded({ extended: false }));
 app.use(routes);
 
 app.get('/ping', (req: Request, res: Response) => {
