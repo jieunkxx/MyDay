@@ -1,0 +1,96 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model budgets {
+  id       Int        @id @default(autoincrement())
+  year     Int        @db.Year
+  week     Int        @db.TinyInt
+  budget   Float?     @db.Float
+  remains  Float?     @db.Float
+  user_id  Int
+  users    users      @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "budgets_ibfk_1")
+  timelogs timelogs[]
+
+  @@index([user_id], map: "user_id")
+}
+
+model categories {
+  id            Int        @id @default(autoincrement())
+  category_name String?    @db.VarChar(300)
+  color_id      Int?
+  colors        colors?    @relation(fields: [color_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "categories_ibfk_1")
+  contents      contents[]
+
+  @@index([color_id], map: "color_id")
+}
+
+model colors {
+  id         Int          @id @default(autoincrement())
+  color_name String       @unique(map: "color_name") @db.VarChar(100)
+  rgb        String?      @db.VarChar(100)
+  categories categories[]
+}
+
+model contents {
+  id          Int         @id @default(autoincrement())
+  title       String?     @db.VarChar(300)
+  memo        String?     @db.Text
+  user_id     Int
+  category_id Int?
+  start_time  DateTime?   @db.Timestamp(0)
+  end_time    DateTime?   @db.Timestamp(0)
+  users       users       @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "contents_ibfk_1")
+  categories  categories? @relation(fields: [category_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "contents_ibfk_2")
+  timelogs    timelogs[]
+
+  @@index([category_id], map: "category_id")
+  @@index([user_id], map: "user_id")
+}
+
+model friends {
+  id                             Int    @id @default(autoincrement())
+  user_id                        Int
+  friend_id                      Int?
+  users_friends_user_idTousers   users  @relation("friends_user_idTousers", fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "friends_ibfk_1")
+  users_friends_friend_idTousers users? @relation("friends_friend_idTousers", fields: [friend_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "friends_ibfk_2")
+
+  @@index([friend_id], map: "friend_id")
+  @@index([user_id], map: "user_id")
+}
+
+model timelogs {
+  id         Int      @id @default(autoincrement())
+  user_id    Int
+  content_id Int
+  duration   Float?   @db.Float
+  budget_id  Int?
+  users      users    @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "timelogs_ibfk_1")
+  contents   contents @relation(fields: [content_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "timelogs_ibfk_2")
+  budgets    budgets? @relation(fields: [budget_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "timelogs_ibfk_3")
+
+  @@index([budget_id], map: "budget_id")
+  @@index([content_id], map: "content_id")
+  @@index([user_id], map: "user_id")
+}
+
+model users {
+  id                               Int        @id @default(autoincrement())
+  user_name                        String?    @db.VarChar(50)
+  email                            String     @unique(map: "email") @db.VarChar(100)
+  social                           Boolean?   @default(true)
+  password                         String?    @db.VarChar(500)
+  user_img                         String?    @default("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRtdz6QQYO7SjHPl-ruRNK-KbfAKhjQEeOAmg&usqp=CAU") @db.VarChar(3000)
+  created_at                       DateTime?  @default(now()) @db.DateTime(0)
+  updated_at                       DateTime?  @db.DateTime(0)
+  budgets                          budgets[]
+  contents                         contents[]
+  friends_friends_user_idTousers   friends[]  @relation("friends_user_idTousers")
+  friends_friends_friend_idTousers friends[]  @relation("friends_friend_idTousers")
+  timelogs                         timelogs[]
+}
