@@ -1,8 +1,16 @@
+import { User, UserInfo } from '../common/types';
 import { PrismaClient } from '@prisma/client';
-
 const prisma = new PrismaClient();
 
-async function createUser(userInfo) {
+export const readUserByEmail = async (email: string) => {
+  const user: Array<User> = await prisma.$queryRaw`
+    SELECT * FROM users
+    WHERE email=${email}
+  `;
+  return user[0];
+};
+
+export const createUser = async (userInfo: UserInfo) => {
   if (userInfo.social) {
     const query = `
       INSERT INTO users (
@@ -23,8 +31,8 @@ async function createUser(userInfo) {
       VALUES (0, ${userInfo.email}, ${userInfo.user_name}, ${userInfo.password})
   `;
   }
-  const user: Array<Object> = await prisma.$queryRaw`
+  const user: Array<User> = await prisma.$queryRaw`
     SELECT * FROM users WHERE email=${userInfo.email}
   `;
   return user[0];
-}
+};
