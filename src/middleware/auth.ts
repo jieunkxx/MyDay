@@ -7,8 +7,9 @@ import { CustomError, DecodedToken } from '../common/types';
 
 const verifyToken = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    //const token = req.headers.authorization.split(' ')[1]; // front => header
-    const token = req.headers.authorization;
+    const header: any = req.headers.authorization;
+    const token: string = header.split(' ')[1];
+    //const token = req.headers.authorization;
     const decodedToken = jwt.verify(
       token as string,
       process.env.SECRET_KEY as string

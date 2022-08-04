@@ -38,7 +38,9 @@ export interface DecodedToken {
 export interface ContentInfo {
   title: string;
   memo?: string;
+  createCategory?: boolean;
   category_name?: string;
+  color_name?: string;
   start_time?: Date;
   end_time?: Date;
 }
