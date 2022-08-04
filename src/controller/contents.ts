@@ -8,22 +8,22 @@ export const getContents = async (req: Request, res: Response) => {
   res.status(200).json({ data: contents });
 };
 
-export const addContents = async (req: Request, res: Response) => {
+export const createContents = async (req: Request, res: Response) => {
   const user: User = (<any>req).user;
   const contentInfo: ContentInfo = req.body;
-  await contentsService.addContents(user.id as any, contentInfo);
+  await contentsService.createContents(user, contentInfo);
   res.status(201).json({ message: 'content created' });
 };
 
 export const updateContents = async (req: Request, res: Response) => {
   const user: User = (<any>req).user;
   const contentInfo: ContentInfo = req.body;
-  await contentsService.updateContents(user.id as any, contentInfo);
+  await contentsService.updateContents(user, contentInfo);
   res.status(201).json({ message: 'content updated' });
 };
 export const deleteContents = async (req: Request, res: Response) => {
   const user: User = (<any>req).user;
   const contentInfo: ContentInfo = req.body;
-  await contentsService.deleteContents(user.id as any, contentInfo);
+  await contentsService.deleteContents(user, contentInfo);
   res.status(201).json({ message: 'content deleted' });
 };

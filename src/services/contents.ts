@@ -4,27 +4,27 @@ import bcrypt from 'bcrypt';
 import axios from 'axios';
 import { User, ContentInfo } from '../common/types';
 import * as contentsModel from '../models/contents';
+import * as categoryModel from '../models/categories';
 
 const doesExist = async (user: User, contentInfo: ContentInfo) => {
-  const categoryId = await contentsModel.readCategoryId(user, contentInfo);
+  const categoryId = await categoryModel.readCategory(user, contentInfo);
   return categoryId;
 };
 
 export const getContents = async (user: User) => {
-  // const result = await contentsModel.getContents(user.id);
-  // return result;
+  const result = await contentsModel.getContents(user.id as number);
+  return result;
 };
 
-export const addContents = async (user: User, contentInfo: ContentInfo) => {
-  // let msg,
-  // let categoryId = await doesExist(user, contentInfo);
-  // if (!categoryId) {
-  //   // create category
-  //   // return category id
-  //   categoryId = await readCategory();
-  // }
-  // // find
+export const createContents = async (user: User, contentInfo: ContentInfo) => {
+  if (contentInfo.createCategory) {
+    await categoryModel.createCategory(user, contentInfo);
+  }
+  const category = await categoryModel.readCategory(user, contentInfo);
+  const categoryId = category.id;
+  await contentsModel.createContents(contentInfo, categoryId);
 };
+
 export const updateContents = async (
   user: User,
   contentInfo: ContentInfo
