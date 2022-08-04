@@ -8,26 +8,32 @@ datasource db {
 }
 
 model budgets {
-  id       Int        @id @default(autoincrement())
-  year     Int        @db.Year
-  week     Int        @db.TinyInt
-  budget   Float?     @db.Float
-  remains  Float?     @db.Float
-  user_id  Int
-  users    users      @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "budgets_ibfk_1")
-  timelogs timelogs[]
+  id              Int            @id @default(autoincrement())
+  yearweek        Int
+  budget          Int?
+  remains         Int?
+  weeklyBudget_id Int?
+  weeklyBudgets   weeklyBudgets? @relation(fields: [weeklyBudget_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "budgets_ibfk_1")
+  categories      categories[]
 
-  @@index([user_id], map: "user_id")
+  @@index([weeklyBudget_id], map: "weeklyBudget_id")
 }
 
 model categories {
   id            Int        @id @default(autoincrement())
+  user_id       Int
   category_name String?    @db.VarChar(300)
-  color_id      Int?
-  colors        colors?    @relation(fields: [color_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "categories_ibfk_1")
+  color_id      Int?       @default(1)
+  timelogs      Int?
+  budget_id     Int?
+  users         users      @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "categories_ibfk_1")
+  colors        colors?    @relation(fields: [color_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "categories_ibfk_2")
+  budgets       budgets?   @relation(fields: [budget_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "categories_ibfk_3")
   contents      contents[]
 
-  @@index([color_id], map: "color_id")
+  @@index([budget_id], map: "budget_id")
+  @@index([user_id], map: "categories_ibfk_1")
+  @@index([color_id], map: "categories_ibfk_2")
 }
 
 model colors {
@@ -41,16 +47,12 @@ model contents {
   id          Int         @id @default(autoincrement())
   title       String?     @db.VarChar(300)
   memo        String?     @db.Text
-  user_id     Int
   category_id Int?
   start_time  DateTime?   @db.Timestamp(0)
   end_time    DateTime?   @db.Timestamp(0)
-  users       users       @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "contents_ibfk_1")
-  categories  categories? @relation(fields: [category_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "contents_ibfk_2")
-  timelogs    timelogs[]
+  categories  categories? @relation(fields: [category_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "contents_ibfk_1")
 
   @@index([category_id], map: "category_id")
-  @@index([user_id], map: "user_id")
 }
 
 model friends {
@@ -64,33 +66,29 @@ model friends {
   @@index([user_id], map: "user_id")
 }
 
-model timelogs {
-  id         Int      @id @default(autoincrement())
-  user_id    Int
-  content_id Int
-  duration   Float?   @db.Float
-  budget_id  Int?
-  users      users    @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "timelogs_ibfk_1")
-  contents   contents @relation(fields: [content_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "timelogs_ibfk_2")
-  budgets    budgets? @relation(fields: [budget_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "timelogs_ibfk_3")
-
-  @@index([budget_id], map: "budget_id")
-  @@index([content_id], map: "content_id")
-  @@index([user_id], map: "user_id")
+model users {
+  id                               Int             @id @default(autoincrement())
+  user_name                        String?         @db.VarChar(50)
+  email                            String          @unique(map: "email") @db.VarChar(100)
+  social                           Boolean?        @default(true)
+  password                         String?         @db.VarChar(500)
+  user_img                         String?         @default("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRtdz6QQYO7SjHPl-ruRNK-KbfAKhjQEeOAmg&usqp=CAU") @db.VarChar(3000)
+  created_at                       DateTime?       @default(now()) @db.DateTime(0)
+  updated_at                       DateTime?       @db.DateTime(0)
+  categories                       categories[]
+  friends_friends_user_idTousers   friends[]       @relation("friends_user_idTousers")
+  friends_friends_friend_idTousers friends[]       @relation("friends_friend_idTousers")
+  weeklyBudgets                    weeklyBudgets[]
 }
 
-model users {
-  id                               Int        @id @default(autoincrement())
-  user_name                        String?    @db.VarChar(50)
-  email                            String     @unique(map: "email") @db.VarChar(100)
-  social                           Boolean?   @default(true)
-  password                         String?    @db.VarChar(500)
-  user_img                         String?    @default("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRtdz6QQYO7SjHPl-ruRNK-KbfAKhjQEeOAmg&usqp=CAU") @db.VarChar(3000)
-  created_at                       DateTime?  @default(now()) @db.DateTime(0)
-  updated_at                       DateTime?  @db.DateTime(0)
-  budgets                          budgets[]
-  contents                         contents[]
-  friends_friends_user_idTousers   friends[]  @relation("friends_user_idTousers")
-  friends_friends_friend_idTousers friends[]  @relation("friends_friend_idTousers")
-  timelogs                         timelogs[]
+model weeklyBudgets {
+  id       Int       @id @default(autoincrement())
+  user_id  Int
+  yearweek Int
+  budget   Int?
+  remains  Int?
+  users    users     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "weeklyBudgets_ibfk_1")
+  budgets  budgets[]
+
+  @@index([user_id], map: "user_id")
 }

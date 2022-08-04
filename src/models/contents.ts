@@ -24,7 +24,8 @@ export const getContents = async (userId: number) => {
   FROM contents
   JOIN categories ON contents.category_id=categories.id
   JOIN budgets ON contents.budget_id = budgets.id
-  JOIN colors ON categories.color_id=colors.id;
+  JOIN colors ON categories.color_id=colors.id
+  WHERE categories.user_id = ${userId}
   `;
   return result;
 };
