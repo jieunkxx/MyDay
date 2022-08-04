@@ -2,6 +2,14 @@ import { User, UserInfo } from '../common/types';
 import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
+export const readUserById = async (userId: number) => {
+  const user: Array<User> = await prisma.$queryRaw`
+    SELECT * FROM users
+    WHERE id=${userId}
+  `;
+  return user[0];
+};
+
 export const readUserByEmail = async (email: string) => {
   const user: Array<User> = await prisma.$queryRaw`
     SELECT * FROM users
