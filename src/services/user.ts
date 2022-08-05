@@ -81,7 +81,7 @@ export const signup = async (userInfo: UserInfo, social: boolean) => {
   } else {
     const msg = 'SIGNUP_FAILED: EMAIL_EXIST';
     const error: CustomError = new Error(msg);
-    error.statusCode = 500;
+    error.statusCode = 400;
     throw error;
   }
 };

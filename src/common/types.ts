@@ -36,6 +36,7 @@ export interface DecodedToken {
 }
 
 export interface ContentInfo {
+  id?: number;
   title: string;
   memo?: string;
   createCategory?: boolean;
