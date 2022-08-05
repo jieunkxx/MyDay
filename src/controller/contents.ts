@@ -23,7 +23,8 @@ export const updateContents = async (req: Request, res: Response) => {
 };
 export const deleteContents = async (req: Request, res: Response) => {
   const user: User = (<any>req).user;
-  const contentInfo: ContentInfo = req.body;
-  await contentsService.deleteContents(user, contentInfo);
+  const searchParams = new URLSearchParams(<any>req.query);
+  const contentId = searchParams.get('contentId');
+  await contentsService.deleteContents(user, Number(contentId));
   res.status(201).json({ message: 'content deleted' });
 };

@@ -2,9 +2,13 @@ import { User, ContentInfo, CustomError } from '../common/types';
 import * as contentsModel from '../models/contents';
 import * as categoryModel from '../models/categories';
 
-const doesExist = async (user: User, contentInfo: ContentInfo) => {
+const doesCategoryExist = async (user: User, contentInfo: ContentInfo) => {
   const category = await categoryModel.readCategory(user, contentInfo);
   return category;
+};
+
+const doesExist = (obj: any) => {
+  return Object.keys(obj).length !== 0;
 };
 
 export const getContents = async (user: User) => {
@@ -22,7 +26,8 @@ export const createContents = async (user: User, contentInfo: ContentInfo) => {
 };
 
 export const updateContents = async (user: User, contentInfo: ContentInfo) => {
-  if (doesExist.length > 0) {
+  const target = await contentsModel.getContentById(contentInfo.id as number);
+  if (doesExist(target)) {
     await contentsModel.updateContents(user, contentInfo);
   } else {
     const msg = 'UPDATE_CONTENTS_FAILED: CONTENT_NOT_EXIST';
@@ -31,7 +36,15 @@ export const updateContents = async (user: User, contentInfo: ContentInfo) => {
     throw error;
   }
 };
-export const deleteContents = async (
-  user: User,
-  contentInfo: ContentInfo
-) => {};
+
+export const deleteContents = async (user: User, contentId: number) => {
+  const target = await contentsModel.getContentById(contentId);
+  if (doesExist(target)) {
+    await contentsModel.deleteContents(user, contentId);
+  } else {
+    const msg = 'UPDATE_CONTENTS_FAILED: CONTENT_NOT_EXIST';
+    const error: CustomError = new Error(msg);
+    error.statusCode = 400;
+    throw error;
+  }
+};

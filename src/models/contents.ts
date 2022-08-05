@@ -3,6 +3,13 @@ import { User, ContentInfo, Category } from '../common/types';
 import { updateBuilder } from './queryBuilder';
 const prisma = new PrismaClient();
 
+export const getContentById = async (id: number) => {
+  const content: Array<ContentInfo> = await prisma.$queryRaw`
+    SELECT * FROM contents WHERE id=${id}
+  `;
+  return content[0];
+};
+
 export const getContents = async (user: User) => {
   const result = await prisma.$queryRaw`
     SELECT 
@@ -59,4 +66,10 @@ export const updateContents = async (user: User, contentInfo: ContentInfo) => {
   );
   await prisma.$queryRawUnsafe(query);
 };
-export const deleteContents = async () => {};
+
+export const deleteContents = async (user: User, contentId: number) => {
+  const query = `
+    DELETE FROM contents WHERE id=${contentId};
+  `;
+  await prisma.$queryRawUnsafe(query);
+};
