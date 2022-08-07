@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt';
 import axios from 'axios';
 import { User, UserInfo, CustomError } from '../common/types';
 import * as userModel from '../models/user';
+import { sign } from 'crypto';
 
 const SECRET_KEY = process.env.SECRET_KEY;
 const salt = bcrypt.genSaltSync();

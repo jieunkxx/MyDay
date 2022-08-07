@@ -8,19 +8,22 @@ export interface User {
   user_name?: string;
   email?: string;
   social?: boolean;
-  password?: string;
-  user_img?: string;
+  password?: string | null;
+  user_img?: string | null;
   created_at?: Date;
   update_at?: Date;
 }
 
 export interface UserInfo {
-  id?: number;
   user_name: string;
   email: string;
   social: boolean;
   user_img: string | null;
   password: string | null;
+}
+
+export interface ConvertedUserInfo extends Omit<UserInfo, 'social'> {
+  social: boolean | number;
 }
 
 export interface EncodedToken {

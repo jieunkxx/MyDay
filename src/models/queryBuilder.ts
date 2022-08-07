@@ -1,5 +1,3 @@
-import { ContentInfo } from '../common/types';
-
 const camelToUnderscore = (key: string) => {
   return key.replace(/([A-Z])/g, '_$1').toLowerCase();
 };
@@ -7,7 +5,9 @@ const camelToUnderscore = (key: string) => {
 const convertObjKeysToSnakeCase = (obj: any) => {
   const newObj: any = {};
   for (const camel in obj) {
-    newObj[camelToUnderscore(camel)] = obj[camel];
+    if (obj[camel] !== null) {
+      newObj[camelToUnderscore(camel)] = obj[camel];
+    }
   }
   return newObj;
 };
@@ -39,8 +39,9 @@ const buildSqlParamsForUpdate = (obj: any) => {
 };
 
 const buildSqlParamsForDelete = (obj: any, condition: string) => {
+  const convertedObj = convertObjKeysToSnakeCase(obj);
   const resultArr: Array<any> = [];
-  const entries = Object.entries(obj);
+  const entries = Object.entries(convertedObj);
   entries.forEach(entry => {
     resultArr.push(`${entry[0]} = "${entry[1]}"`);
   });

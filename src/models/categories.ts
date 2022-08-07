@@ -3,11 +3,14 @@ import { User, ContentInfo, Category } from '../common/types';
 
 const prisma = new PrismaClient();
 
-export const readCategory = async (user: User, contentInfo: ContentInfo) => {
+export const readCategory = async (
+  userId: number,
+  contentInfo: ContentInfo
+) => {
   const query = `
   SELECT * FROM categories 
   WHERE 
-  user_id=${user.id}
+  user_id=${userId}
   AND
   category_name='${contentInfo.category_name}';
 `;
@@ -15,7 +18,10 @@ export const readCategory = async (user: User, contentInfo: ContentInfo) => {
   return category[0];
 };
 
-export const createCategory = async (user: User, contentInfo: ContentInfo) => {
+export const createCategory = async (
+  userId: number,
+  contentInfo: ContentInfo
+) => {
   const query = `
     INSERT INTO categories (
       category_name,
@@ -24,7 +30,7 @@ export const createCategory = async (user: User, contentInfo: ContentInfo) => {
     ) VALUES (
       ${contentInfo.category_name},
       '(SELECT id FROM colors WHERE color_name = ${contentInfo.color_name})',
-      ${user.id}
+      ${userId}
     ); 
   `;
   await prisma.$queryRawUnsafe(query);
