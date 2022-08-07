@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { User, ContentInfo, Category } from '../common/types';
+import { ContentInfo } from '../common/types';
 import { deleteBuilder, insertBuilder, updateBuilder } from './queryBuilder';
 const prisma = new PrismaClient();
 
