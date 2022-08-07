@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import { User, ContentInfo, Category } from '../common/types';
-import { updateBuilder } from './queryBuilder';
+import { deleteBuilder, insertBuilder, updateBuilder } from './queryBuilder';
 const prisma = new PrismaClient();
 
 export const getContentById = async (id: number) => {
@@ -40,21 +40,9 @@ export const createContents = async (
   contentInfo: ContentInfo,
   categoryId: number
 ) => {
-  const query = `
-  INSERT INTO contents (
-    title,
-    memo,
-    category_id,
-    start_time,
-    end_time
-    ) VALUES (
-    '${contentInfo.title}',
-    '${contentInfo.memo}',
-    ${categoryId},
-    '${contentInfo.start_time}',
-    '${contentInfo.end_time}'
-    );
-  `;
+  const data = { ...contentInfo, categoryId };
+  delete data.category_name;
+  const query = insertBuilder(data as ContentInfo, 'contents');
   await prisma.$queryRawUnsafe(query);
 };
 
@@ -68,8 +56,7 @@ export const updateContents = async (user: User, contentInfo: ContentInfo) => {
 };
 
 export const deleteContents = async (user: User, contentId: number) => {
-  const query = `
-    DELETE FROM contents WHERE id=${contentId};
-  `;
+  const data = { id: contentId };
+  const query = deleteBuilder(data, 'contents', '');
   await prisma.$queryRawUnsafe(query);
 };
