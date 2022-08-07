@@ -1,5 +1,5 @@
 {
-  "name": "myday-backend",
+  "name": "myday",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -8,19 +8,25 @@
     "start": "nodemon server.ts",
     "build-ts": "tsc",
     "build": "npm run build-sass && npm run build-ts && npm run lint && npm run copy-static-assets",
-    "debug": "npm run build && npm run watch-debug"
+    "copy-static-assets": "ts-node copyStaticAssets.ts",
+    "debug": "npm run build && npm run watch-debug",
+    "lint": "tsc --noEmit && eslint \"**/*.{js,ts}\" --quiet --fix",
+    "serve-debug": "nodemon --inspect dist/server.js",
+    "serve": "node dist/server.js",
+    "dev:start": "npm-run-all build start",
+    "dev": "nodemon --watch src -e ts,ejs --exec npm run dev:start"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jieunkxx/MyDay-backend.git"
+    "url": "git+https://github.com/jieunkxx/MyDay.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/jieunkxx/MyDay-backend/issues"
+    "url": "https://github.com/jieunkxx/MyDay/issues"
   },
-  "homepage": "https://github.com/jieunkxx/MyDay-backend#readme",
+  "homepage": "https://github.com/jieunkxx/MyDay#readme",
   "dependencies": {
     "@prisma/client": "^4.1.0",
     "async": "3.2.2",

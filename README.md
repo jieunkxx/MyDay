@@ -1,1 +1,1 @@
-# MyDay-backend
+# MyDay
