@@ -1,4 +1,4 @@
-import { ConvertedUserInfo, User, UserInfo } from '../common/types';
+import { ConvertedUserDTO, User, UserDTO } from '../common/types';
 import { PrismaClient } from '@prisma/client';
 import { insertBuilder } from './queryBuilder';
 const prisma = new PrismaClient();
@@ -19,8 +19,8 @@ export const readUserByEmail = async (email: string) => {
   return user[0];
 };
 
-export const createUser = async (userInfo: UserInfo) => {
-  const convertedData: ConvertedUserInfo = userInfo;
+export const createUser = async (userInfo: UserDTO) => {
+  const convertedData: ConvertedUserDTO = userInfo;
   if (convertedData.social) convertedData.social = 1;
   if (!convertedData.social) convertedData.social = 0;
   const query = insertBuilder(convertedData, 'users');

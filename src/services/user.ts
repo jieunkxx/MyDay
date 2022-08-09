@@ -2,9 +2,10 @@ import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import axios from 'axios';
-import { User, UserInfo, CustomError } from '../common/types';
+import { User, UserDTO } from '../common/types';
 import * as userModel from '../models/user';
 import { sign } from 'crypto';
+import { CustomError } from '../common/class';
 
 const SECRET_KEY = process.env.SECRET_KEY;
 const salt = bcrypt.genSaltSync();
@@ -21,7 +22,7 @@ const validateEmail = (email: string) => {
     );
 };
 
-const isInputValid = (userInfo: UserInfo, social: boolean, option: string) => {
+const isInputValid = (userInfo: UserDTO, social: boolean, option: string) => {
   let msg = null;
   if (!userInfo) {
     msg = 'INVALID_USER_INFO';
@@ -44,8 +45,7 @@ const isInputValid = (userInfo: UserInfo, social: boolean, option: string) => {
   }
 
   if (msg) {
-    const error: CustomError = new Error(msg);
-    error.statusCode = 400;
+    const error = new CustomError(msg, 400);
     throw error;
   }
 };
@@ -57,14 +57,13 @@ const createToken = async (userId: number) => {
     });
     return token;
   } catch (err) {
-    const error = err as CustomError;
-    error.statusCode = 400;
-    error.message = 'CREATE_TOKEN_FAILED';
+    const msg = 'CREATE_TOKEN_FAILED';
+    const error = new CustomError(msg, 400);
     throw error;
   }
 };
 
-export const signup = async (userInfo: UserInfo, social: boolean) => {
+export const signup = async (userInfo: UserDTO, social: boolean) => {
   const checkEmailExist: User = await userModel.readUserByEmail(userInfo.email);
   if (!checkEmailExist) {
     isInputValid(userInfo, social, 'signup');
@@ -81,13 +80,12 @@ export const signup = async (userInfo: UserInfo, social: boolean) => {
     return user.id;
   } else {
     const msg = 'SIGNUP_FAILED: EMAIL_EXIST';
-    const error: CustomError = new Error(msg);
-    error.statusCode = 400;
+    const error = new CustomError(msg, 400);
     throw error;
   }
 };
 
-export const login = async (userInfo: UserInfo) => {
+export const login = async (userInfo: UserDTO) => {
   isInputValid(userInfo, false, 'login');
   const user: User = await userModel.readUserByEmail(userInfo.email);
   let errMsg;
@@ -108,7 +106,6 @@ export const login = async (userInfo: UserInfo) => {
       return token;
     }
   }
-  const error: CustomError = new Error(errMsg);
-  error.statusCode = 400;
+  const error = new CustomError(errMsg, 400);
   throw error;
 };

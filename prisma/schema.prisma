@@ -12,11 +12,13 @@ model budgets {
   yearweek        Int
   budget          Int?
   remains         Int?
+  category_id     Int?
   weeklyBudget_id Int?
   weeklyBudgets   weeklyBudgets? @relation(fields: [weeklyBudget_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "budgets_ibfk_1")
-  categories      categories[]
+  categories      categories?    @relation(fields: [category_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "budgets_ibfk_2")
 
   @@index([weeklyBudget_id], map: "weeklyBudget_id")
+  @@index([category_id], map: "category_id")
 }
 
 model categories {
@@ -25,15 +27,13 @@ model categories {
   category_name String?    @db.VarChar(300)
   color_id      Int?       @default(1)
   timelogs      Int?
-  budget_id     Int?
   users         users      @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "categories_ibfk_1")
   colors        colors?    @relation(fields: [color_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "categories_ibfk_2")
-  budgets       budgets?   @relation(fields: [budget_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "categories_ibfk_3")
+  budgets       budgets[]
   contents      contents[]
 
-  @@index([budget_id], map: "budget_id")
-  @@index([user_id], map: "categories_ibfk_1")
-  @@index([color_id], map: "categories_ibfk_2")
+  @@index([color_id], map: "color_id")
+  @@index([user_id], map: "user_id")
 }
 
 model colors {

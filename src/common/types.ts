@@ -1,4 +1,10 @@
-export interface CustomError {
+import internal from 'stream';
+
+export interface CustomErrorSetup {
+  statusCode: number;
+  message: string;
+}
+export interface CustomError extends Error {
   statusCode?: number;
   message: string;
 }
@@ -14,7 +20,7 @@ export interface User {
   update_at?: Date;
 }
 
-export interface UserInfo {
+export interface UserDTO {
   user_name: string;
   email: string;
   social: boolean;
@@ -22,7 +28,7 @@ export interface UserInfo {
   password: string | null;
 }
 
-export interface ConvertedUserInfo extends Omit<UserInfo, 'social'> {
+export interface ConvertedUserDTO extends Omit<UserDTO, 'social'> {
   social: boolean | number;
 }
 
@@ -38,7 +44,7 @@ export interface DecodedToken {
   exp: number;
 }
 
-export interface ContentInfo {
+export interface ContentDTO {
   id?: number;
   title: string;
   memo?: string;
@@ -51,8 +57,25 @@ export interface ContentInfo {
 }
 
 export interface Category {
-  id: number;
+  id?: number;
   category_name?: string;
-  color_id: number;
-  user_id: number;
+  color_id?: number;
+  user_id?: number;
+}
+
+export type CategoryDTO = Category;
+
+export interface Budget {
+  id?: number;
+  yearweek?: number;
+  budget?: number;
+  remains?: number;
+  category_id?: number;
+  weeklyBudget_id?: number;
+}
+
+export interface BudgetDTO {
+  category_id: number;
+  budget: number;
+  yearWeek: string;
 }

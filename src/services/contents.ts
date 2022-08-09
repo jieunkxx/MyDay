@@ -1,12 +1,5 @@
-import { User, ContentInfo, CustomError } from '../common/types';
-import * as contentsModel from '../models/contents';
-import * as categoryModel from '../models/categories';
-
-const doesCategoryExist = async (userId: number, contentInfo: ContentInfo) => {
-  const category = await categoryModel.readCategory(userId, contentInfo);
-  return category;
-};
-
+import { User, ContentDTO, Category, CustomError } from '../common/types';
+import { contentsModel, categoriesModel } from '../models';
 const doesExist = (obj: any) => {
   return Object.keys(obj).length !== 0;
 };
@@ -18,19 +11,22 @@ export const getContents = async (userId: number) => {
 
 export const createContents = async (
   userId: number,
-  contentInfo: ContentInfo
+  contentInfo: ContentDTO
 ) => {
   if (contentInfo.createCategory) {
-    await categoryModel.createCategory(userId, contentInfo);
+    await categoriesModel.createCategoryFromContent(userId, contentInfo);
   }
-  const category = await categoryModel.readCategory(userId, contentInfo);
+  const category: Category = await categoriesModel.getCategoryByName(
+    userId,
+    contentInfo.category_name as string
+  );
   const categoryId = category.id;
-  await contentsModel.createContents(contentInfo, categoryId);
+  await contentsModel.createContents(contentInfo, categoryId as number);
 };
 
 export const updateContents = async (
   userId: number,
-  contentInfo: ContentInfo
+  contentInfo: ContentDTO
 ) => {
   const target = await contentsModel.getContentById(contentInfo.id as number);
   if (doesExist(target)) {
@@ -48,7 +44,7 @@ export const deleteContents = async (userId: number, contentId: number) => {
   if (doesExist(target)) {
     await contentsModel.deleteContents(userId, contentId);
   } else {
-    const msg = 'UPDATE_CONTENTS_FAILED: CONTENT_NOT_EXIST';
+    const msg = 'DELETE_CONTENTS_FAILED: CONTENT_NOT_EXIST';
     const error: CustomError = new Error(msg);
     error.statusCode = 400;
     throw error;

@@ -1,10 +1,10 @@
 import { PrismaClient } from '@prisma/client';
-import { ContentInfo } from '../common/types';
+import { ContentDTO } from '../common/types';
 import { deleteBuilder, insertBuilder, updateBuilder } from './queryBuilder';
 const prisma = new PrismaClient();
 
 export const getContentById = async (id: number) => {
-  const content: Array<ContentInfo> = await prisma.$queryRaw`
+  const content: Array<ContentDTO> = await prisma.$queryRaw`
     SELECT * FROM contents WHERE id=${id}
   `;
   return content[0];
@@ -37,18 +37,18 @@ export const getContents = async (userId: number) => {
 };
 
 export const createContents = async (
-  contentInfo: ContentInfo,
+  contentInfo: ContentDTO,
   categoryId: number
 ) => {
   const data = { ...contentInfo, categoryId };
   delete data.category_name;
-  const query = insertBuilder(data as ContentInfo, 'contents');
+  const query = insertBuilder(data as ContentDTO, 'contents');
   await prisma.$queryRawUnsafe(query);
 };
 
 export const updateContents = async (
   userId: number,
-  contentInfo: ContentInfo
+  contentInfo: ContentDTO
 ) => {
   const query = updateBuilder(
     contentInfo.id as number,

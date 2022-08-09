@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { User, ContentInfo } from '../common/types';
+import { User, ContentDTO } from '../common/types';
 import * as contentsService from './../services/contents';
 
 export const getContents = async (req: Request, res: Response) => {
@@ -10,14 +10,14 @@ export const getContents = async (req: Request, res: Response) => {
 
 export const createContents = async (req: Request, res: Response) => {
   const user: User = (<any>req).user;
-  const contentInfo: ContentInfo = req.body;
+  const contentInfo: ContentDTO = req.body;
   await contentsService.createContents(user.id as number, contentInfo);
   res.status(201).json({ message: 'content created' });
 };
 
 export const updateContents = async (req: Request, res: Response) => {
   const user: User = (<any>req).user;
-  const contentInfo: ContentInfo = req.body;
+  const contentInfo: ContentDTO = req.body;
   await contentsService.updateContents(user.id as number, contentInfo);
   res.status(201).json({ message: 'content updated' });
 };

@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import asyncWrap from '../async-wrap';
-import * as friendsController from '../controller/friends';
+import { friendsController } from '../controller';
 const router = Router();
 
 router.get('/', asyncWrap(friendsController.getFriends));
