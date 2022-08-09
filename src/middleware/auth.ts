@@ -1,6 +1,5 @@
 import * as jwt from 'jsonwebtoken';
 import type { JwtPayload } from 'jsonwebtoken';
-import express from 'express';
 import { Request, Response, NextFunction } from 'express';
 import * as userModel from '../models/user';
 import { CustomError, DecodedToken } from '../common/types';

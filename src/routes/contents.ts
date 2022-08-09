@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import asyncWrap from '../async-wrap';
-import * as contentsController from '../controller/contents';
+import { contentsController } from '../controller';
 import verifyToken from '../middleware/auth';
 const router = Router();
 

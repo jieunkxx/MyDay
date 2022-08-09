@@ -1,16 +1,16 @@
 import { PrismaClient } from '@prisma/client';
-import { User, ContentInfo, Category } from '../common/types';
+import { ContentDTO } from '../common/types';
 import { deleteBuilder, insertBuilder, updateBuilder } from './queryBuilder';
 const prisma = new PrismaClient();
 
 export const getContentById = async (id: number) => {
-  const content: Array<ContentInfo> = await prisma.$queryRaw`
+  const content: Array<ContentDTO> = await prisma.$queryRaw`
     SELECT * FROM contents WHERE id=${id}
   `;
   return content[0];
 };
 
-export const getContents = async (user: User) => {
+export const getContents = async (userId: number) => {
   const result = await prisma.$queryRaw`
     SELECT 
       categories.id as categoryId,
@@ -29,7 +29,7 @@ export const getContents = async (user: User) => {
     FROM (SELECT * FROM contents ORDER BY start_time) contents
     JOIN (SELECT * FROM categories ORDER BY category_name DESC) categories ON categories.id=category_id
     JOIN colors ON colors.id=categories.color_id
-    WHERE categories.user_id=${user.id}
+    WHERE categories.user_id=${userId}
     GROUP BY categoryId
     ORDER BY category_name ASC
   `;
@@ -37,16 +37,19 @@ export const getContents = async (user: User) => {
 };
 
 export const createContents = async (
-  contentInfo: ContentInfo,
+  contentInfo: ContentDTO,
   categoryId: number
 ) => {
   const data = { ...contentInfo, categoryId };
   delete data.category_name;
-  const query = insertBuilder(data as ContentInfo, 'contents');
+  const query = insertBuilder(data as ContentDTO, 'contents');
   await prisma.$queryRawUnsafe(query);
 };
 
-export const updateContents = async (user: User, contentInfo: ContentInfo) => {
+export const updateContents = async (
+  userId: number,
+  contentInfo: ContentDTO
+) => {
   const query = updateBuilder(
     contentInfo.id as number,
     contentInfo,
@@ -55,7 +58,7 @@ export const updateContents = async (user: User, contentInfo: ContentInfo) => {
   await prisma.$queryRawUnsafe(query);
 };
 
-export const deleteContents = async (user: User, contentId: number) => {
+export const deleteContents = async (userId: number, contentId: number) => {
   const data = { id: contentId };
   const query = deleteBuilder(data, 'contents', '');
   await prisma.$queryRawUnsafe(query);

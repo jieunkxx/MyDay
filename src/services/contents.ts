@@ -1,34 +1,36 @@
-import { User, ContentInfo, CustomError } from '../common/types';
-import * as contentsModel from '../models/contents';
-import * as categoryModel from '../models/categories';
-
-const doesCategoryExist = async (user: User, contentInfo: ContentInfo) => {
-  const category = await categoryModel.readCategory(user, contentInfo);
-  return category;
-};
-
+import { User, ContentDTO, Category, CustomError } from '../common/types';
+import { contentsModel, categoriesModel } from '../models';
 const doesExist = (obj: any) => {
   return Object.keys(obj).length !== 0;
 };
 
-export const getContents = async (user: User) => {
-  const result = await contentsModel.getContents(user);
+export const getContents = async (userId: number) => {
+  const result = await contentsModel.getContents(userId);
   return result;
 };
 
-export const createContents = async (user: User, contentInfo: ContentInfo) => {
+export const createContents = async (
+  userId: number,
+  contentInfo: ContentDTO
+) => {
   if (contentInfo.createCategory) {
-    await categoryModel.createCategory(user, contentInfo);
+    await categoriesModel.createCategoryFromContent(userId, contentInfo);
   }
-  const category = await categoryModel.readCategory(user, contentInfo);
+  const category: Category = await categoriesModel.getCategoryByName(
+    userId,
+    contentInfo.category_name as string
+  );
   const categoryId = category.id;
-  await contentsModel.createContents(contentInfo, categoryId);
+  await contentsModel.createContents(contentInfo, categoryId as number);
 };
 
-export const updateContents = async (user: User, contentInfo: ContentInfo) => {
+export const updateContents = async (
+  userId: number,
+  contentInfo: ContentDTO
+) => {
   const target = await contentsModel.getContentById(contentInfo.id as number);
   if (doesExist(target)) {
-    await contentsModel.updateContents(user, contentInfo);
+    await contentsModel.updateContents(userId, contentInfo);
   } else {
     const msg = 'UPDATE_CONTENTS_FAILED: CONTENT_NOT_EXIST';
     const error: CustomError = new Error(msg);
@@ -37,12 +39,12 @@ export const updateContents = async (user: User, contentInfo: ContentInfo) => {
   }
 };
 
-export const deleteContents = async (user: User, contentId: number) => {
+export const deleteContents = async (userId: number, contentId: number) => {
   const target = await contentsModel.getContentById(contentId);
   if (doesExist(target)) {
-    await contentsModel.deleteContents(user, contentId);
+    await contentsModel.deleteContents(userId, contentId);
   } else {
-    const msg = 'UPDATE_CONTENTS_FAILED: CONTENT_NOT_EXIST';
+    const msg = 'DELETE_CONTENTS_FAILED: CONTENT_NOT_EXIST';
     const error: CustomError = new Error(msg);
     error.statusCode = 400;
     throw error;

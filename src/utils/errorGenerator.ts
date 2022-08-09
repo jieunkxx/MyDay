@@ -1,6 +1,8 @@
-const errorGenerator = ({ statusCode, message }) => {
-  const error: { statusCode?: number; message: string } = new Error(message);
-  error.statusCode = statusCode;
+import { CustomError, CustomErrorSetup } from '../common/types';
+
+const errorGenerator = (obj: CustomErrorSetup) => {
+  const error: CustomError = new Error(obj.message);
+  error.statusCode = obj.statusCode;
   throw error;
 };
 
