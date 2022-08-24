@@ -4,8 +4,13 @@ const doesExist = (obj: any) => {
   return Object.keys(obj).length !== 0;
 };
 
-export const getContents = async (userId: number) => {
-  const result = await contentsModel.getContents(userId);
+export const getContents = async (userId: number, date: string) => {
+  const result = await contentsModel.getContents(userId, date);
+  return result;
+};
+
+export const getContentsByCategory = async (userId: number) => {
+  const result = await contentsModel.getContentsByCategory(userId);
   return result;
 };
 

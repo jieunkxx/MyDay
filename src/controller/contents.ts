@@ -4,8 +4,20 @@ import * as contentsService from './../services/contents';
 
 export const getContents = async (req: Request, res: Response) => {
   const user: User = (<any>req).user;
-  const contents = await contentsService.getContents(user.id as number);
-  res.status(200).json({ data: contents });
+  const { date } = req.body;
+  const contents = await contentsService.getContents(
+    user.id as number,
+    date as string
+  );
+  res.status(200).json({ contents });
+};
+
+export const getContentsByCategory = async (req: Request, res: Response) => {
+  const user: User = (<any>req).user;
+  const contents = await contentsService.getContentsByCategory(
+    user.id as number
+  );
+  res.status(200).json({ contents });
 };
 
 export const createContents = async (req: Request, res: Response) => {

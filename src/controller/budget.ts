@@ -11,7 +11,7 @@ export const createBudget = async (req: Request, res: Response) => {
     user.id as number,
     budgetInfo
   );
-  res.status(200).json({ data: budget });
+  res.status(200).json({ budget });
 };
 export const updateBudget = async (req: Request, res: Response) => {};
 export const deleteBudget = async (req: Request, res: Response) => {};

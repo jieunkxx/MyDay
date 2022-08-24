@@ -1,14 +1,15 @@
 import * as jwt from 'jsonwebtoken';
 import type { JwtPayload } from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
-import * as userModel from '../models/user';
+import { userModel } from '../models';
 import { CustomError, DecodedToken } from '../common/types';
-
+import errorGenerator from '../utils/errorGenerator';
 const verifyToken = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const header: any = req.headers.authorization;
     const token: string = header.split(' ')[1];
     //const token = req.headers.authorization;
+
     const decodedToken = jwt.verify(
       token as string,
       process.env.SECRET_KEY as string
@@ -24,7 +25,11 @@ const verifyToken = async (req: Request, res: Response, next: NextFunction) => {
     }
   } catch (err) {
     const error = err as CustomError;
-    res.status(error.statusCode || 400).json({ message: error.message });
+    if (error.toString().includes('jwt expired')) {
+      res.status(401).send('jwt_expired');
+    } else {
+      res.status(error.statusCode || 400).json({ message: error.message });
+    }
     next(error);
   }
 };

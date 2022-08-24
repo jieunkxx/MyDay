@@ -65,6 +65,7 @@ export const updateBuilder = (inquiryId: number, data: any, table: string) => {
     UPDATE ${table} SET ${buildSqlParamsForUpdate(
     data
   )} WHERE id = ${inquiryId};`;
+  console.log(query);
   return query;
 };
 

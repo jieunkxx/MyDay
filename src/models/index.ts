@@ -1,7 +1,7 @@
-import * as budgetModel from './budget';
-import * as categoriesModel from './categories';
-import * as contentsModel from './contents';
-import * as friendsModel from './friends';
-import * as userModel from './user';
+import budgetModel from './budget';
+import categoriesModel from './categories';
+import contentsModel from './contents';
+import friendsModel from './friends';
+import userModel from './user';
 
 export { budgetModel, categoriesModel, contentsModel, friendsModel, userModel };

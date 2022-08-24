@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { User, BudgetDTO } from '../common/types';
-import * as budgetModel from '../models/budget';
+import { budgetModel } from '../models';
 
 export const getBudget = async (req: Request, res: Response) => {};
 export const createBudget = async (userId: number, budgetInfo: BudgetDTO) => {

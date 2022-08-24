@@ -60,10 +60,16 @@ export interface Category {
   id?: number;
   category_name?: string;
   color_id?: number;
+  color_hex?: string;
   user_id?: number;
+  timelogs?: number;
 }
 
-export type CategoryDTO = Category;
+export interface CategoryDTO {
+  category_name: string;
+  color_hex: string;
+  timelogs: number;
+}
 
 export interface Budget {
   id?: number;
@@ -78,4 +84,9 @@ export interface BudgetDTO {
   category_id: number;
   budget: number;
   yearWeek: string;
+}
+
+export interface TokenObj {
+  myDayToken: string;
+  kakaoToken: stringl;
 }
