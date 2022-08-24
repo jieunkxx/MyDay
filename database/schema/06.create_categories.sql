@@ -5,6 +5,8 @@ CREATE TABLE categories (
     color_id INT DEFAULT 1,
     timelogs INT,
     PRIMARY KEY(id),
+    created_at DATETIME DEFAULT NOW(),
+    updated_at DATETIME,
     FOREIGN KEY(user_id) REFERENCES users(id),
     FOREIGN KEY(color_id) REFERENCES colors(id)
 );

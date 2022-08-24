@@ -1,7 +1,10 @@
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
-
+import prisma from '../prisma';
 const getFriends = async () => {};
 const addFriends = async () => {};
 const deleteFriends = async () => {};
+
+export default {
+  getFriends,
+  addFriends,
+  deleteFriends,
+};

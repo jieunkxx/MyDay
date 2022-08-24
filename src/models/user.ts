@@ -1,9 +1,8 @@
-import { ConvertedUserDTO, User, UserDTO } from '../common/types';
-import { PrismaClient } from '@prisma/client';
+import { ConvertedUserDTO, TokenObj, User, UserDTO } from '../common/types';
 import { insertBuilder } from './queryBuilder';
-const prisma = new PrismaClient();
+import prisma from '../prisma';
 
-export const readUserById = async (userId: number) => {
+const readUserById = async (userId: number) => {
   const user: Array<User> = await prisma.$queryRaw`
     SELECT * FROM users
     WHERE id=${userId}
@@ -11,7 +10,7 @@ export const readUserById = async (userId: number) => {
   return user[0];
 };
 
-export const readUserByEmail = async (email: string) => {
+const readUserByEmail = async (email: string) => {
   const user: Array<User> = await prisma.$queryRaw`
     SELECT * FROM users
     WHERE email=${email}
@@ -19,7 +18,7 @@ export const readUserByEmail = async (email: string) => {
   return user[0];
 };
 
-export const createUser = async (userInfo: UserDTO) => {
+const createUser = async (userInfo: UserDTO) => {
   const convertedData: ConvertedUserDTO = userInfo;
   if (convertedData.social) convertedData.social = 1;
   if (!convertedData.social) convertedData.social = 0;
@@ -50,4 +49,34 @@ export const createUser = async (userInfo: UserDTO) => {
       SELECT * FROM users WHERE email=${userInfo.email}
     `;
   return user[0];
+};
+
+const storeToken = async (token: TokenObj) => {
+  await prisma.$queryRaw`
+    INSERT INTO token (myday_token, kakao_token) VALUES 
+    (${token.myDayToken}, ${token.kakaoToken})
+  `;
+};
+
+const removeToken = async (token: string) => {
+  await prisma.$queryRaw`
+    DELETE FROM token WHERE myday_token=${token}
+  `;
+};
+
+const readToken = async (token: string) => {
+  // const kakaoToken: Array<any> = await prisma.$queryRaw`
+  //   SELECT kakao_token FROM token WHERE token=${token}
+  // `;
+  // return kakaoToken.length > 0 ? kakaoToken[0].kakao_token : null;
+  return null;
+};
+
+export default {
+  readUserById,
+  readUserByEmail,
+  createUser,
+  storeToken,
+  removeToken,
+  readToken,
 };

@@ -1,4 +1,4 @@
-import prisma from '../../prisma';
+import prisma from '../prisma';
 import { User, Budget, BudgetDTO } from '../common/types';
 
 const checkExist = async (
@@ -24,16 +24,13 @@ const getBudgetId = async (
   return id[0];
 };
 
-export const getBudgetsOfYearWeek = async (
-  userId: number,
-  yearWeek: string
-) => {
+const getBudgetsOfYearWeek = async (userId: number, yearWeek: string) => {
   const budgets: Array<Budget> = await prisma.$queryRaw`
     SELECT * FROM budgets where user_id=${userId} AND yearWeek=${yearWeek}
   `;
   return budgets;
 };
-export const createBudget = async (userId: number, budgetInfo: BudgetDTO) => {
+const createBudget = async (userId: number, budgetInfo: BudgetDTO) => {
   const budgetId = await getBudgetId(
     userId,
     budgetInfo.yearWeek,
@@ -45,7 +42,16 @@ export const createBudget = async (userId: number, budgetInfo: BudgetDTO) => {
   } else {
   }
 };
-export const updateBudget = async () => {};
-export const deleteBudget = async () => {};
+const updateBudget = async () => {};
+const deleteBudget = async () => {};
 
 //UPDATE `myday`.`categories` SET `budget_id` = '1' WHERE (`id` = '2');
+
+export default {
+  checkExist,
+  getBudgetId,
+  getBudgetsOfYearWeek,
+  createBudget,
+  updateBudget,
+  deleteBudget,
+};

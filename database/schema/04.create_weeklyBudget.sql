@@ -4,6 +4,8 @@ CREATE TABLE weeklyBudgets (
     yearweek    INT NOT NULL,
     budget      INT,
     remains     INT,
+    created_at DATETIME DEFAULT NOW(),
+    updated_at DATETIME,
     PRIMARY KEY(id),
     FOREIGN KEY(user_id) REFERENCES users(id)
 );
