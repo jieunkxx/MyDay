@@ -86,7 +86,6 @@ const createCategory = async (userId: number, categoryDTO: CategoryDTO) => {
 };
 
 const updateCategory = async (userId: number, categoryInfo: Category) => {
-  console.log('categoryInfo', categoryInfo);
   //const query = updateBuilder(id as number, categoryInfo, 'categories');
   const query = `
     UPDATE categories 

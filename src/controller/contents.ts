@@ -20,6 +20,16 @@ export const getContentsByCategory = async (req: Request, res: Response) => {
   res.status(200).json({ contents });
 };
 
+export const getContentsByCategoryId = async (req: Request, res: Response) => {
+  const user: User = (<any>req).user;
+  const categoryId: any = req.params.id;
+  const contents = await contentsService.getContentsByCategoryId(
+    user.id as number,
+    categoryId as number
+  );
+  res.status(200).json({ contents });
+};
+
 export const createContents = async (req: Request, res: Response) => {
   const user: User = (<any>req).user;
   const contentInfo: ContentDTO = req.body;

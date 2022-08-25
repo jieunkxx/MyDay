@@ -15,8 +15,17 @@ class ContentsRouter extends PathRouter {
       verifyToken,
       asyncWrap(contentsController.getContentsByCategory)
     );
+    router.get(
+      '/byCategoryId/:id',
+      verifyToken,
+      asyncWrap(contentsController.getContentsByCategoryId)
+    );
     router.post('/', verifyToken, asyncWrap(contentsController.getContents));
-    router.post('/', verifyToken, asyncWrap(contentsController.createContents));
+    router.post(
+      '/create',
+      verifyToken,
+      asyncWrap(contentsController.createContents)
+    );
     router.patch(
       '/',
       verifyToken,

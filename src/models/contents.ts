@@ -55,6 +55,33 @@ const getContentsByCategory = async (userId: number) => {
   return result;
 };
 
+const getContentsByCategoryId = async (userId: number, categoryId: number) => {
+  const query = `
+    SELECT 
+      categories.id as categoryId,
+      categories.category_name,
+      'color', colors.hex,
+      (JSON_ARRAYAGG(
+        JSON_OBJECT(
+          'content_id', contents.id,
+          'content_title', contents.title,
+          'memo', contents.memo,
+          'start_time', contents.start_time,
+          'end_time', contents.end_time
+        )
+       )
+      ) as content        
+    FROM (SELECT * FROM contents ORDER BY start_time) contents
+    JOIN (SELECT * FROM categories ORDER BY category_name DESC) categories ON categories.id=category_id
+    JOIN colors ON colors.id=categories.color_id
+    WHERE categories.user_id=${userId} AND categories.id=${categoryId}
+    GROUP BY categoryId
+    ORDER BY category_name ASC
+  `;
+  const result = await prisma.$queryRawUnsafe(query);
+  return result;
+};
+
 const createContents = async (contentInfo: ContentDTO, categoryId: number) => {
   const data = { ...contentInfo, categoryId };
   delete data.category_name;
@@ -84,6 +111,7 @@ export default {
   getContentById,
   getContents,
   getContentsByCategory,
+  getContentsByCategoryId,
   createContents,
   updateContents,
   deleteContents,
