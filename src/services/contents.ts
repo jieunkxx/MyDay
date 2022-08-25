@@ -14,6 +14,17 @@ export const getContentsByCategory = async (userId: number) => {
   return result;
 };
 
+export const getContentsByCategoryId = async (
+  userId: number,
+  categoryId: number
+) => {
+  const result = await contentsModel.getContentsByCategoryId(
+    userId,
+    categoryId
+  );
+  return result;
+};
+
 export const createContents = async (
   userId: number,
   contentInfo: ContentDTO

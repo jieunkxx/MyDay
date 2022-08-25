@@ -18,7 +18,6 @@ export const createCategory = async (req: Request, res: Response) => {
 export const updateCategory = async (req: Request, res: Response) => {
   const user: User = (<any>req).user;
   const categoryInfo: Category = req.body;
-  console.log('categoryInfo', categoryInfo);
   await categoryService.updateCategory(user.id as number, categoryInfo);
   res.status(201).json({ message: 'content updated' });
 };

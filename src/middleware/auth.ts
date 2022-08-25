@@ -9,7 +9,6 @@ const verifyToken = async (req: Request, res: Response, next: NextFunction) => {
     const header: any = req.headers.authorization;
     const token: string = header.split(' ')[1];
     //const token = req.headers.authorization;
-
     const decodedToken = jwt.verify(
       token as string,
       process.env.SECRET_KEY as string
